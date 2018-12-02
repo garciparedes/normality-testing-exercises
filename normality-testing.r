@@ -1,62 +1,45 @@
 rm(list = ls())
 
-library(magrittr)
-library(IRdisplay, warn.conflicts = FALSE)
-library(dplyr, warn.conflicts = FALSE)
-library(Bhat)
-library(ggplot2)
-library(reshape2)
-library(tidyr, warn.conflicts = FALSE)
 library(nortest)
 
-alpha <- 0.05
-PowerTest <- function(fn, n, nsim){
-  mean(replicate(nsim, fn(rt(n, df = 2))$p.value < alpha))
+library(magrittr)
+library(dplyr, warn.conflicts = FALSE)
+library(tidyr, warn.conflicts = FALSE)
+library(reshape2, warn.conflicts = FALSE)
+library(ggplot2)
+
+AlternativeHypothesisGenerator <- function(n) {
+  rt(n, df = 2)  # Generador de valores procedentes de una distribución t_2.
 }
 
-
-LillieforsPower <- function(n, nsim = 1000) {
-  PowerTest(lillie.test, n, nsim)
+PowerTest <- function(test, n, alpha = 0.05, nsim = 1000,
+                      generator = AlternativeHypothesisGenerator){
+  mean(replicate(nsim, test(generator(n))$p.value < alpha))
 }
 
-CramerVonMisesPower <- function(n, nsim = 1000) {
-  PowerTest(cvm.test, n, nsim)
+LillieforsPower <- function(n, ...) {
+  PowerTest(lillie.test, n, ...)
 }
 
-AndersonDarlingPower <- function(n, nsim = 1000) {
-  PowerTest(ad.test, n, nsim)
+CramerVonMisesPower <- function(n, ...) {
+  suppressWarnings(PowerTest(cvm.test, n, ...))
 }
 
-
-ShapiroFranciaPower <- function(n, nsim = 1000) {
-  PowerTest(sf.test, n, nsim)
+AndersonDarlingPower <- function(n, ...) {
+  PowerTest(ad.test, n, ...)
 }
 
-alpha <- 0.05
-results <- data.frame(n = c(10, 30, 60, 100, 150, 300, 500))
-results$Lilliefors <-
-  results$n %>%
-  sapply(function(n) {
-    LillieforsPower(n)
-  })
-results$Cramer.Von.Mises <-
-  results$n %>%
-  sapply(function(n) {
-    suppressWarnings(CramerVonMisesPower(n))
-  })
-results$Anderson.Darling <-
-  results$n %>%
-  sapply(function(n) {
-    AndersonDarlingPower(n)
-  })
+ShapiroFranciaPower <- function(n, ...) {
+  PowerTest(sf.test, n, ...)
+}
 
-results$Shapiro.Francia <-
-  results$n %>%
-  sapply(function(n) {
-    ShapiroFranciaPower(n)
-  })
-
-results
+results <-
+  data.frame(n = c(10, 30, 60, 100, 150, 300, 500)) %>%
+  rowwise() %>%
+  mutate(Lilliefors       = LillieforsPower(n),
+         CramerVonMises = CramerVonMisesPower(n),
+         AndersonDarling = AndersonDarlingPower(n),
+         ShapiroFrancia  = ShapiroFranciaPower(n))
 
 results.plot <- results %>%
     gather(method, value, - n) %>%
@@ -66,6 +49,6 @@ results.plot <- results %>%
         xlab("Tamaño Muestral") +
         ylab("Potencia") +
         labs(colour = "Método")
-results.plot
 
-ggsave("plot.png", results.plot, width = 7, height = 5, dpi = 120)
+write.csv(results, "normality-testing.csv", row.names = FALSE, quote = FALSE)
+ggsave("normality-testing.png", results.plot, width = 7, height = 4, dpi = 120)
