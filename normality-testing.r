@@ -36,8 +36,8 @@ ShapiroFranciaPower <- function(n, ...) {
 results <-
   data.frame(n = c(10, 30, 60, 100, 150, 300, 500)) %>%
   rowwise() %>%
-  mutate(Lilliefors       = LillieforsPower(n),
-         CramerVonMises = CramerVonMisesPower(n),
+  mutate(Lilliefors      = LillieforsPower(n),
+         CramerVonMises  = CramerVonMisesPower(n),
          AndersonDarling = AndersonDarlingPower(n),
          ShapiroFrancia  = ShapiroFranciaPower(n))
 

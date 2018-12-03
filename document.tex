@@ -17,8 +17,6 @@
     \paragraph{}
     Para el contraste de la hipótesis de normalidad se han desarrollado una grán cantidad de métodos y técnicas que tratan de responder a la pregunta sobre si los datos observados en una determinada muestra pueden asumirse normales, o por contra, siguen una distribución diferente.
 
-    \paragraph{}
-    Para ello, se puede definir un test de \emph{bondad de ajuste} donde la hipótesis nula indica que la distribución $F$ de los datos observados es Normal, frente a la alternativa de que no lo sea. Dicho contraste se indica en la \autoref{eq:test}. Nótese que en este caso se ha llevado a cabo de manera compuesta (donde los parámetros de localización y escala son libres). Normalmente, cuando un contraste se define de esta manera, los parámetros $\mu$ y $\sigma ^ 2$ son estimados a partir de los datos observados.
 
     \begin{equation*}
     \label{eq:test}
@@ -29,56 +27,40 @@
     \end{equation*}
 
     \paragraph{}
-    En este caso, vamos a comparar $4$ tests de normalidad, los cuales describiremos a continuación: \emph{Lilliefors} en la \autoref{sec:lilliefors}, \emph{Cramer-Von-Mises} en la \autoref{sec:cramervonmises}, \emph{Anderson-Darling} en la
-    \autoref{sec:andersondarling} y \emph{Shapiro-Francia} en la \autoref{sec:shapirofrancia}. Posteriormente en la \autoref{sec:simulation} se describe la metodología llevada a cabo para la estimación de la potencia $\pi$ de los distintos tests. Finalmente, en la \autoref{sec:results} se muestran los resultados obtenidos.
+    Para ello, se puede definir un test de \emph{bondad de ajuste} donde la hipótesis nula indica que la distribución $F$ de los datos observados es Normal, frente a la alternativa de que no lo sea. Dicho contraste se indica en la \autoref{eq:test}. Nótese que en este caso se ha llevado a cabo de manera compuesta (donde los parámetros de localización y escala son libres). Normalmente, cuando un contraste se define de esta manera, los parámetros $\mu$ y $\sigma ^ 2$ son estimados a partir de los datos observados. Es en estos casos donde cobran importancia los test que se describen a continuación.
 
-    \subsection{Lilliefors}
-    \label{sec:lilliefors}
+    \paragraph{}
+    En este caso, vamos a comparar $4$ tests de normalidad, los cuales describiremos a continuación: \emph{Lilliefors}, \emph{Cramer-Von-Mises}, \emph{Anderson-Darling} y \emph{Shapiro-Francia}. Posteriormente en la \autoref{sec:simulation} se describe la metodología llevada a cabo para la estimación de la potencia $\pi$ de los distintos tests. Finalmente, en la \autoref{sec:results} se muestran los resultados obtenidos.
 
-      \paragraph{}
-      [TODO]
+    \paragraph{Lilliefors}
+    El test de bondad de ajuste de \emph{Lilliefors} consiste en una variación del test de \emph{Kolmogorov-Smirnov}, que estima los parámetros de localilización y dispersión de la distribución normal a partir de los correpondientes valores muestrales $\overline{x}$ y $s^2$, permitiendo que la hipótesis nula sea compuesta.
 
-      \begin{equation}
-      \label{eq:test_lilliefors}
-      \end{equation}
+    \begin{equation}
+    \label{eq:test_lilliefors}
+      \widehat{D}_n = sup_x \mid \widehat{F}_n(x) - F_0(x) \mid
+    \end{equation}
 
-      \paragraph{}
-      [TODO]
+    \paragraph{}
+    Por lo tanto, el estadístico test se define en la \autoref{eq:test_lilliefors}, donde $\widehat{F}_n(x)$ es la función de distribución empírica y $F_0(x)$ la de una distribución $Normal(\overline{x}, s^2)$. En este caso, se utilizan unos valores críticos menos restrictivos obtenidos por simulación montecarlo, lo cual hace que el test sea menos conservador que el original de \emph{Kolmogorov-Smirnov}. El test rechaza la hipótesis nula para valores grandes del estadístico $\widehat{D}_n$.
 
-    \subsection{Cramer-Von-Mises}
-    \label{sec:cramervonmises}
-      \paragraph{}
-      [TODO]
+    \paragraph{Cramer-Von-Mises}
+    El test de bondad de ajuste de ajuste de \emph{Cramer-Von-Mises} está basado en el estadístico descrito en la \autoref{eq:test_cramervonmises}. Rechaza la hipótesis nula para valores grandes del estadístico $\widehat{W}^2_n$ y es más potente que el de \emph{Lilliefors}.
 
-      \begin{equation}
-      \label{eq:test_cramervonmises}
-      \end{equation}
+    \begin{equation}
+    \label{eq:test_cramervonmises}
+      \widehat{W}^2_n = n \int_{-\infty}^{\infty} \left(\widehat{F}_n(x) - F_0(x) \right)^2 d F_0(x)
+    \end{equation}
 
-    \subsection{Anderson-Darling}
-    \label{sec:andersondarling}
+    \paragraph{Anderson-Darling}
+    El test de bondad de ajuste de ajuste de \emph{Cramer-Von-Mises} está basado en el estadístico descrito en la \autoref{eq:test_andersondarling}. Rechaza la hipótesis nula para valores grandes del estadístico $\widehat{W}^2_n$ y es muy similar en potencia al de \emph{Cramer-Von-Mises}.
 
-      \paragraph{}
-      [TODO]
+    \begin{equation}
+    \label{eq:test_andersondarling}
+      \widehat{W}^2_n = n \int_{-\infty}^{\infty} \frac{\left(\widehat{F}_n(x) - F_0(x) \right)^2}{ F_0(x) (1 - F_0(x))} d F_0(x)
+    \end{equation}
 
-      \begin{equation}
-      \label{eq:test_andersondarling}
-      \end{equation}
-
-      \paragraph{}
-      [TODO]
-
-    \subsection{Shapiro-Francia}
-    \label{sec:shapirofrancia}
-
-      \paragraph{}
-      [TODO]
-
-      \begin{equation}
-      \label{eq:test_shapirofrancia}
-      \end{equation}
-
-      \paragraph{}
-      [TODO]
+    \paragraph{Shapiro-Francia}
+    Este test de bondad de ajuste se basa en una aproximación (más simple computacionalmente) del test de \emph{Shapiro-Wilk}, basada en la correlación al cuadrado entre los valores ordenados de la muestra y los esperados de una distribución $Normal(\overline{x}, s^2)$. Dado que el estadístico consiste en una correlación, estará entre $0$ y $1$, reschazando la hipótesis nula para valores próximos a $0$.
 
   \section{Simulación}
   \label{sec:simulation}
@@ -108,7 +90,7 @@
 
   \section{Resultados}
   \label{sec:results}
-  
+
     \paragraph{}
     La simulación se ha llevado a cabo mediante la generación de $1000$ para cada aproximación. De esta manera se han generado los resultados que se muestran en la \autoref{table:results}, que se han representado de manera gráfica en la \autoref{fig:results}.
 
